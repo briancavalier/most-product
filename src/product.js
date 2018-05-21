@@ -4,7 +4,7 @@ import { type Stream } from '@most/types'
 import { map, scan } from '@most/core'
 import { id } from '@most/prelude'
 import { dup, bimapPair, foldPair } from './pair'
-import { type Either } from './either'
+import { type Either, toPair } from './either'
 
 // Streams of products
 
@@ -24,7 +24,4 @@ export const mapSecond = <A, B, C> (g: B => C, s: Stream<[A, B]>): Stream<[A, C]
   mapBoth(id, g, s)
 
 export const update = <A, B> (ab: [A, B], s: Stream<Either<A, B>>): Stream<[A, B]> =>
-  scan(_update, ab, s)
-
-const _update = <A, B> ([a, b]: [A, B], eab: Either<A, B>): [A, B] =>
-  eab.right ? [a, eab.value] : [eab.value, b]
+  scan(toPair, ab, s)

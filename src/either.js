@@ -15,3 +15,6 @@ export const classify = <A> (p: A => boolean, a: A): Either<A, A> =>
 
 export const bimapEither = <A, B, C, D> (f: A => C, g: B => D, e: Either<A, B>): Either<C, D> =>
   e.right ? Right(g(e.value)) : Left(f(e.value))
+
+export const toPair = <A, B> ([a, b]: [A, B], eab: Either<A, B>): [A, B] =>
+  eab.right ? [a, eab.value] : [eab.value, b]

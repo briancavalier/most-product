@@ -4,11 +4,12 @@ Playing with streams of products (pairs) and coproducts (eithers).
 
 ## Example
 
-Let's say you need to conditionally map events that match a predicate.
+Let's say you need to conditionally map events that match a predicate.  For example, you want to tag all even and odd numbers with "Even" and "Odd".
 
 You can do it declaratively in 3 composable steps: Partition the stream into evens and odds, tag each respectively, reassemble the stream of tagged values.
 
 ```js
+// The stream of numbers we want to tag
 const nums: Stream<number> = // ...
 
 const tagged: Stream<string> = unpartition(mapEither(tagOdd, tagEven, partition(isEven, nums)))
@@ -27,8 +28,8 @@ const tagged: Stream<string> = nums
 
 ```js
 // Tag even numbers with "Even", and odd numbers with "Odd"
-// Ideally, we could write 3 independent functions, and compose
-// a solution from them easily:
+// Ideally, we'd write 3 independent functions, and compose
+// a solution from them:
 // 1. an isEven predicate
 // 2. an "Even" tagging function
 // 3. an "Odd" tagging function
@@ -42,7 +43,7 @@ const tagOdd = x => `Odd ${x}`
 const nums: Stream<number> = // ...
 ```
 
-### Attempt 1
+#### Attempt 1
 
 One approach is to `filter` the same stream twice.
 
@@ -63,7 +64,7 @@ That works, but has 2 downsides:
 1. It has to apply the isEven predicate _twice_ to each event
 2. It has to use multicast, which is easy to forget
 
-### Attempt 2
+#### Attempt 2
 
 Another approach is to write a conditional lambda.
 
@@ -76,11 +77,11 @@ const tagged: Stream<string> = map(x => isEven(x) ? tagEven(x) : tagOdd(x), nums
 This is a reasonable solution, but still leaves room for improvement:
 
 1. The "extra" lambda requires us to think about each event value one at a time, rather than only thinking about the `nums` as a whole.
-2. The lambda mentions `x` 3 times
+2. The lambda mentions `x` 4 times
 
 Can we be even more declarative and compositional?
 
-### Using a coproduct stream
+#### Using a coproduct stream
 
 ```js
 // We can solve the problem in 3 declarative steps:
