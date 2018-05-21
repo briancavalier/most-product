@@ -2,21 +2,25 @@
 
 import { type Stream } from '@most/types'
 import { map, merge } from '@most/core'
-import { type Either, left, right, either } from './either'
+import { id } from '@most/prelude'
+import { type Either, Left, Right, bimapEither, classify } from './either'
 
 // Streams of coproducts
 
 export const inject = <A, B> (sa: Stream<A>, sb: Stream<B>): Stream<Either<A, B>> =>
-  merge(map(left, sa), map(right, sb))
+  merge(map(Left, sa), map(Right, sb))
 
-export const part = <A> (p: A => boolean, sa: Stream<A>): Stream<Either<A, A>> =>
-  map(a => p(a) ? right(a) : left(a), sa)
+export const partition = <A> (p: A => boolean, sa: Stream<A>): Stream<Either<A, A>> =>
+  map(a => classify(p, a), sa)
 
-export const unpart = <A> (saa: Stream<Either<A, A>>): Stream<A> =>
+export const unpartition = <A> (saa: Stream<Either<A, A>>): Stream<A> =>
   map(aa => aa.value, saa)
 
-export const mapLeft = <A, B, C> (f: A => C, s: Stream<Either<A, B>>): Stream<Either<C, B>> =>
-  map(eac => eac.right ? right(eac.value) : left(f(eac.value)), s)
+export const mapEither = <A, B, C, D> (f: A => C, g: B => D, s: Stream<Either<A, B>>): Stream<Either<C, D>> =>
+  map(eab => bimapEither(f, g, eab), s)
 
-export const mapRight = <A, B, C> (f: B => C, s: Stream<Either<A, B>>): Stream<Either<A, C>> =>
-  map(eac => eac.right ? right(f(eac.value)) : left(eac.value), s)
+export const mapLeft = <A, B, C> (f: A => C, s: Stream<Either<A, B>>): Stream<Either<C, B>> =>
+  mapEither(f, id, s)
+
+export const mapRight = <A, B, C> (g: B => C, s: Stream<Either<A, B>>): Stream<Either<A, C>> =>
+  mapEither(id, g, s)

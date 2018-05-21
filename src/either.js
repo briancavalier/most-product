@@ -4,11 +4,14 @@ export type Either<A, B> =
   | { right: true, value: B }
   | { right: false, value: A }
 
-export const right = <A, B> (value: B): Either<A, B> =>
+export const Right = <A, B> (value: B): Either<A, B> =>
   ({ right: true, value })
 
-export const left = <A, B> (value: A): Either<A, B> =>
+export const Left = <A, B> (value: A): Either<A, B> =>
   ({ right: false, value })
 
-export const either = <A, B, C> (ac: A => C, bc: B => C, e: Either<A, B>): C =>
-  e.right ? bc(e.value) : ac(e.value)
+export const classify = <A> (p: A => boolean, a: A): Either<A, A> =>
+  p(a) ? Right(a) : Left(a)
+
+export const bimapEither = <A, B, C, D> (f: A => C, g: B => D, e: Either<A, B>): Either<C, D> =>
+  e.right ? Right(g(e.value)) : Left(f(e.value))

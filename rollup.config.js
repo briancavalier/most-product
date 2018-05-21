@@ -1,14 +1,19 @@
 import babel from 'rollup-plugin-babel'
+import node from 'rollup-plugin-node-resolve'
 import pkg from './package.json'
 
 export default {
   input: 'src/index.js',
-  plugins: [babel({
-    babelrc: false,
-    presets: ['es2015-rollup', 'flow']
-  })],
+  plugins: [
+    node(),
+    babel({
+      babelrc: false,
+      presets: ['es2015-rollup', 'flow']
+    })
+  ],
   external: [
-    '@most/core'
+    '@most/core',
+    '@most/types'
   ],
   output: [{
     file: pkg.module,
@@ -16,11 +21,7 @@ export default {
     sourcemap: true
   }, {
     file: pkg.main,
-    format: 'umd',
-    name: 'mostProduct',
-    globals: {
-      '@most/core': 'mostCore'
-    },
+    format: 'cjs',
     sourcemap: true
   }]
 }
