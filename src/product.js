@@ -3,10 +3,13 @@
 import { type Stream } from '@most/types'
 import { map, scan } from '@most/core'
 import { id } from '@most/prelude'
-import { dup, bimapPair, foldPair } from './pair'
+import { dup, bimapPair, foldPair, projectPair } from './pair'
 import { type Either, toPair } from './either'
 
 // Streams of products
+
+export const project = <A, B, C> (f: A => B, g: A => C, s: Stream<A>): Stream<[B, C]> =>
+  map(a => projectPair(f, g, a), s)
 
 export const split = <A> (s: Stream<A>): Stream<[A, A]> =>
   map(dup, s)
