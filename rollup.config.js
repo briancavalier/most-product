@@ -21,7 +21,11 @@ export default {
     sourcemap: true
   }, {
     file: pkg.main,
-    format: 'cjs',
-    sourcemap: true
+    format: 'umd',
+    name: 'mostProduct',
+    sourcemap: true,
+    globals: {
+      '@most/core': 'mostCore'
+    }
   }]
 }
