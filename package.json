@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
   "author": "Brian Cavalier <brian@briancavalier.com>",
   "license": "MIT",
   "devDependencies": {
