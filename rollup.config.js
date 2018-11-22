@@ -8,7 +8,7 @@ export default {
     node(),
     babel({
       babelrc: false,
-      presets: ['es2015-rollup', 'flow']
+      presets: [['@babel/preset-env', { modules: false }], '@babel/preset-flow']
     })
   ],
   external: [
